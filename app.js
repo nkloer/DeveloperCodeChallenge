@@ -32,22 +32,32 @@ const client = yelp.client(apiKey);
 
 
 client.search(searchRequest).then(response => {
+
+  // all Rsults is the raw, pre-prettified json
   const allResults = response.jsonBody.businesses;
+
+  // this is all the results, but in a more readable format
   const prettyJson = JSON.stringify(allResults, null, 4);
+
+  // top rated ice cream stores in alpheretta in order of rating
   let alpherettaIceCream = allResults.filter(function (el) {
     return el.location.city = "alpheretta"
   });
+
+  // top five of alpherettaIceCream
   let topFive = alpherettaIceCream.slice(0, 5)
-  let reviewAlias = topFive.filter(function (el) {
-    return el.alias
-})
+
+  //getReviews gets all the reviews and displays them of the top5 icecream places
+  for (let i = 0; i < topFive.length; i++) {
+    getReviews(topFive[i].id)
+  }
 //   let topFiveReviews = topFive.forEach(reviews(topFive.alias))
-  console.log(reviewAlias);
+  console.log(topFive);
 }).catch(e => {
   console.log(e);
 });
 
-function reviews(storeId) {
+function getReviews(storeId) {
     client.reviews(storeId).then(response => {
         console.log(response.jsonBody.reviews[0].text);
       }).catch(e => {
